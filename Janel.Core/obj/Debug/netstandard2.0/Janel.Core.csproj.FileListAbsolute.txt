@@ -1,0 +1,17 @@
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Janel.Contract.dll
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Janel.Data.dll
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Observer.Core.dll
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Observer.SqlEventHandler.dll
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Observer.Core.pdb
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Observer.SqlEventHandler.pdb
+D:\Projects\Janel\Janel.Core\obj\Debug\netstandard2.0\Janel.Core.csprojResolveAssemblyReference.cache
+D:\Projects\Janel\Janel.Core\obj\Debug\netstandard2.0\Janel.Core.csproj.CoreCompileInputs.cache
+D:\Projects\Janel\Janel.Core\obj\Debug\netstandard2.0\Janel.Core.AssemblyInfoInputs.cache
+D:\Projects\Janel\Janel.Core\obj\Debug\netstandard2.0\Janel.Core.AssemblyInfo.cs
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Janel.Core.deps.json
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Janel.Core.dll
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Janel.Contract.pdb
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Janel.Data.pdb
+D:\Projects\Janel\Janel.Core\bin\Debug\netstandard2.0\Janel.Core.pdb
+D:\Projects\Janel\Janel.Core\obj\Debug\netstandard2.0\Janel.Core.dll
+D:\Projects\Janel\Janel.Core\obj\Debug\netstandard2.0\Janel.Core.pdb

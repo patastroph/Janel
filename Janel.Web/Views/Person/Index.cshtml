@@ -1,0 +1,33 @@
+﻿@model Janel.Web.Models.PersonViewModel
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+  ViewData["Title"] = "Index";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+  <a asp-action="Add">Create New</a>
+</p>
+
+<pager class="pager-container" options="@PagedList.Core.Mvc.PagedListRenderOptions.ClassicPlusFirstAndLast" list="@Model.PersonList" asp-action="Index" asp-controller="Person" asp-all-route-data='Context.Request.Query.Where(q => q.Key != "page").ToDictionary(q => q.Key, q => q.Value.ToString())' />
+Page @(Model.PersonList.PageCount < Model.PersonList.PageNumber ? 0 : Model.PersonList.PageNumber) of @Model.PersonList.PageCount (@Model.PersonList.TotalItemCount)
+<table class="table">
+  <thead>
+    <tr>
+      <td>Name</td>
+      <td>Email</td>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Model.PersonList) {
+    <tr>
+      <td>@Html.DisplayFor(modelItem => item.Name)</td>
+      <td>@Html.DisplayFor(modelItem => item.Email)</td>
+    </tr>
+    }
+  </tbody>
+</table>
+<pager class="pager-container" options="@PagedList.Core.Mvc.PagedListRenderOptions.ClassicPlusFirstAndLast" list="@Model.PersonList" asp-action="Index" asp-controller="Person" asp-all-route-data='Context.Request.Query.Where(q => q.Key != "page").ToDictionary(q => q.Key, q => q.Value.ToString())' />
