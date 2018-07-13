@@ -1,8 +1,12 @@
 ﻿@model Janel.Data.Person
 
 @{
-    ViewData["Title"] = "Edit";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+  ViewData["Title"] = "Edit";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+  @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 }
 
 <h2>Edit</h2>
@@ -10,39 +14,39 @@
 <h4>Person</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Save">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Level" class="control-label"></label>
-                <input asp-for="Level" class="form-control" />
-                <span asp-validation-for="Level" class="text-danger"></span>
-            </div>
-                <input asp-for="Id" class="form-control" type="hidden" />
-                
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-default" />
-            </div>
-        </form>
-    </div>
+  <div class="col-md-4">
+    <form asp-action="Save">
+      <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+      <div class="form-group">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="Email" class="control-label"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="PhoneNumber" class="control-label"></label>
+        <input asp-for="PhoneNumber" class="form-control" />
+        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+      </div>
+      <div class="form-group">
+        <label asp-for="Level" class="control-label"></label>
+        <input asp-for="Level" class="form-control" />
+        <span asp-validation-for="Level" class="text-danger"></span>
+      </div>
+      <input asp-for="Id" class="form-control" type="hidden" />
+
+      <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-default" />
+      </div>
+    </form>
+  </div>
 </div>
 
 <div>
-    <a asp-action="Index">Back to List</a>
+  <a asp-action="Index">Back to List</a>
 </div>
 

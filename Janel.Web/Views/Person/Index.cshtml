@@ -6,19 +6,6 @@
   Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-
-@section Scripts {
-<script>
-  $(document).ready(function () {
-    jQuery('[data-confirm]').click(function (e) {
-      if (!confirm(jQuery(this).attr("data-confirm"))) {
-        e.preventDefault();
-      }
-    });
-  });
-</script>
-}
-
 <h2>Index</h2>
 
 <p>
@@ -32,15 +19,18 @@ Page @(Model.PersonList.PageCount < Model.PersonList.PageNumber ? 0 : Model.Pers
     <tr>
       <td>Name</td>
       <td>Email</td>
+      <td>Phone</td>
+      <td>Action</td>
     </tr>
   </thead>
   <tbody>
     @foreach (var item in Model.PersonList) {
-      <tr>
-        <td>@Html.DisplayFor(modelItem => item.Name)</td>
-        <td>@Html.DisplayFor(modelItem => item.Email)</td>
-        <td><a class="btn btn-default" asp-controller="Person" asp-action="Edit" asp-route-id="@item.Id">Edit</a> <a class="btn btn-default" asp-controller="Person" asp-action="Delete" data-confirm="are u sure?" asp-route-id="@item.Id">Delete</a> </td>
-      </tr>
+    <tr>
+      <td>@Html.DisplayFor(modelItem => item.Name)</td>
+      <td>@Html.DisplayFor(modelItem => item.Email)</td>
+      <td>@Html.DisplayFor(modelItem => item.PhoneNumber)</td>
+      <td><a class="btn btn-default" asp-controller="Person" asp-action="Edit" asp-route-id="@item.Id">Edit</a> <a class="btn btn-default" asp-controller="Person" asp-action="Delete" data-confirm="are u sure?" asp-route-id="@item.Id">Delete</a> </td>
+    </tr>
     }
   </tbody>
 </table>

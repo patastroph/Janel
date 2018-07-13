@@ -40,7 +40,9 @@ namespace Janel.Web.Controllers {
 
     [HttpPost]
     public IActionResult Save(Person person) {
-      _personManager.Save(person);
+      //if (ModelState.IsValid) { Need fix to work with Id
+        _personManager.Save(person);
+      //}
 
       return RedirectToAction("Index");
     }

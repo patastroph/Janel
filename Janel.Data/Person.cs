@@ -1,8 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Janel.Data {
   public class Person : Entity {
+    [Required]
     public string Name { get; set; }
+    [Required]
+    [EmailAddress]
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
     public int Level { get; set; }

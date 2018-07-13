@@ -9,3 +9,5 @@ D:\Projects\Janel\Janel.Data\obj\Debug\netstandard2.0\Janel.Data.dll
 D:\Projects\Janel\Janel.Data\obj\Debug\netstandard2.0\Janel.Data.pdb
 D:\Projects\Janel\Janel.Data\bin\Debug\netstandard2.0\Observer.Core.dll
 D:\Projects\Janel\Janel.Data\bin\Debug\netstandard2.0\Observer.Core.pdb
+D:\Projects\Janel\Janel.Data\bin\Debug\netstandard2.0\System.ComponentModel.Annotations.dll
+D:\Projects\Janel\Janel.Data\bin\Debug\netstandard2.0\System.ComponentModel.Annotations.xml
