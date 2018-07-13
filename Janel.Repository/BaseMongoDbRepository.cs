@@ -10,7 +10,7 @@ namespace Janel.Repository {
   public abstract class BaseMongoDbRepository<T> : IBaseRepository<T> where T : Entity, new() {
     protected const string connectionString = "mongodb://localhost";
     protected IMongoDatabase database => new MongoClient(connectionString).GetDatabase(System.AppDomain.CurrentDomain.FriendlyName.Replace(".", ""));
-    protected virtual string CollectionName { get { return this.GetType().Name;  } }
+    protected virtual string CollectionName { get { return typeof(T).Name;  } }
 
     public void Delete(T entity) {
       Delete(entity.Id);
@@ -21,7 +21,7 @@ namespace Janel.Repository {
     }
 
     public T GetById(Guid id) {
-      return database.GetCollection<T>(CollectionName).Find(e => e.Id.Equals(id)) as T;
+      return database.GetCollection<T>(CollectionName).Find(e => e.Id.Equals(id)).FirstOrDefault() as T;
     }
 
     public abstract T GetByName(string name);

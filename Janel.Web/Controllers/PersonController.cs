@@ -1,4 +1,5 @@
 ﻿using Janel.Contract;
+using Janel.Data;
 using Janel.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using PagedList.Core;
@@ -24,11 +25,13 @@ namespace Janel.Web.Controllers {
     }
 
     public IActionResult Edit(Guid id) {
-      var viewModel = new PersonEditViewModel {
-        Person = _personManager.GetPerson(id)
-      };
+      return View(_personManager.GetPerson(id));
+    }
 
-      return View(viewModel);
+    public IActionResult Delete(Guid id) {
+      _personManager.Delete(id);
+
+      return RedirectToAction("Index");
     }
 
     public IActionResult Add() {
@@ -36,8 +39,8 @@ namespace Janel.Web.Controllers {
     }
 
     [HttpPost]
-    public IActionResult Save(PersonEditViewModel editViewModel) {
-      _personManager.Save(editViewModel.Person);
+    public IActionResult Save(Person person) {
+      _personManager.Save(person);
 
       return RedirectToAction("Index");
     }
