@@ -28,7 +28,7 @@ namespace Janel.Core {
     }
 
     public void Save(Person person) {
-      if (person.Id.Equals(Guid.Empty)) {
+      if (!person.Id.HasValue) {
         //Validate Unicity ...
         _unitOfWork.PersonRepository.Insert(person);
       } else {

@@ -4,6 +4,7 @@ using Janel.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using PagedList.Core;
 using System;
+using System.Linq;
 
 namespace Janel.Web.Controllers {
   public class PersonController : Controller {
@@ -14,11 +15,11 @@ namespace Janel.Web.Controllers {
     }
 
     public IActionResult Index(int page = 1, int pageSize = 10) {
-      var list = _personManager.GetPersonList();
+      var list = _personManager.GetPersonList().OrderBy(p => p.Name);
 
       var viewModel = new PersonViewModel {
         PageSize = pageSize,
-        PersonList = new PagedList<Data.Person>(list, page, pageSize)
+        PersonList = new PagedList<Person>(list, page, pageSize)
       };
 
       return View(viewModel);
@@ -40,11 +41,13 @@ namespace Janel.Web.Controllers {
 
     [HttpPost]
     public IActionResult Save(Person person) {
-      //if (ModelState.IsValid) { Need fix to work with Id
+      if (ModelState.IsValid) { 
         _personManager.Save(person);
-      //}
 
-      return RedirectToAction("Index");
+        return RedirectToAction("Index");
+      }
+      
+      return View("Edit", person);      
     }
   }
 }

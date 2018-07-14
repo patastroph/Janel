@@ -8,6 +8,7 @@ namespace Janel.Data {
     [Required]
     [EmailAddress]
     public string Email { get; set; }
+    [Phone]
     public string PhoneNumber { get; set; }
     public int Level { get; set; }
     public List<CommunicationType> PreferedCommunications { get; set; }

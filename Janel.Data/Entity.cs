@@ -1,7 +1,9 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Janel.Data {
   public abstract class Entity {
-    public Guid Id { get; set; }
+    [Key]
+    public Guid? Id { get; set; }
   }
 }

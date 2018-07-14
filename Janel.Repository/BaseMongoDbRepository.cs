@@ -13,7 +13,7 @@ namespace Janel.Repository {
     protected virtual string CollectionName { get { return typeof(T).Name;  } }
 
     public void Delete(T entity) {
-      Delete(entity.Id);
+      Delete(entity.Id.Value);
     }
 
     public void Delete(Guid id) {

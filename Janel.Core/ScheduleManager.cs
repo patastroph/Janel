@@ -84,7 +84,7 @@ namespace Janel.Core {
     }
 
     public void RemoveSchedule(Schedule schedule) {
-      _unitOfWork.ScheduleRepository.Delete(schedule.Id);
+      _unitOfWork.ScheduleRepository.Delete(schedule.Id.Value);
     }
 
     public void SetPersonAsBack(Person responsible) {
