@@ -4,6 +4,8 @@ using System.Linq;
 using Janel.Contract;
 using Janel.Contract.Repository;
 using Janel.Data;
+using MongoDB.Bson.Serialization;
+using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Driver;
 
 namespace Janel.Repository {
@@ -11,6 +13,14 @@ namespace Janel.Repository {
     protected const string connectionString = "mongodb://localhost";
     protected IMongoDatabase database => new MongoClient(connectionString).GetDatabase(System.AppDomain.CurrentDomain.FriendlyName.Replace(".", ""));
     protected virtual string CollectionName { get { return typeof(T).Name;  } }
+    
+    public BaseMongoDbRepository() {
+      if (!Configuration.SerializerAsBeenSetted) {
+        BsonSerializer.RegisterSerializer(DateTimeSerializer.LocalInstance);
+        Configuration.SerializerAsBeenSetted = true;
+      }     
+    }
+
 
     public void Delete(T entity) {
       Delete(entity.Id.Value);
@@ -30,7 +40,7 @@ namespace Janel.Repository {
       return database.GetCollection<T>(CollectionName).AsQueryable();
     }
 
-    public T Insert(T item) {
+    public virtual T Insert(T item) {
       item.Id = Guid.NewGuid();
 
       database.GetCollection<T>(CollectionName).InsertOne(item);
@@ -38,7 +48,7 @@ namespace Janel.Repository {
       return item;
     }
 
-    public T Update(T item) {
+    public virtual T Update(T item) {
       database.GetCollection<T>(CollectionName).ReplaceOne(e => e.Id == item.Id, item);
 
       return item;

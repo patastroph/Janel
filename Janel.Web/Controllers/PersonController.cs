@@ -18,6 +18,7 @@ namespace Janel.Web.Controllers {
       var list = _personManager.GetPersonList().OrderBy(p => p.Name);
 
       var viewModel = new PersonViewModel {
+        Page = page,
         PageSize = pageSize,
         PersonList = new PagedList<Person>(list, page, pageSize)
       };
@@ -32,11 +33,11 @@ namespace Janel.Web.Controllers {
     public IActionResult Delete(Guid id) {
       _personManager.Delete(id);
 
-      return RedirectToAction("Index");
+      return RedirectToAction(nameof(Index));
     }
 
     public IActionResult Add() {
-      return View("Edit");
+      return View(nameof(Edit));
     }
 
     [HttpPost]
@@ -44,10 +45,10 @@ namespace Janel.Web.Controllers {
       if (ModelState.IsValid) { 
         _personManager.Save(person);
 
-        return RedirectToAction("Index");
+        return RedirectToAction(nameof(Index));
       }
       
-      return View("Edit", person);      
+      return View(nameof(Edit), person);      
     }
   }
 }

@@ -1,0 +1,51 @@
+﻿@model Janel.Web.Models.ScheduleListViewModel
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+  ViewData["Title"] = "Person List";
+  Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Person List</h2>
+
+<p>
+  <a asp-action="Add">Create New</a>
+</p>
+
+<form asp-action="Index" method="get">
+  <label asp-for="PersonId">Person:</label>
+  <select asp-for="PersonId" asp-items="@(new SelectList(Model.People, "Id", "Name"))">
+    <option />
+  </select>
+
+  <label asp-for="ShowPastSchedules">Show past schedule:</label>
+  @Html.CheckBox("ShowPastSchedules")
+
+  <input type="submit" />
+</form>
+
+<pager class="pager-container" options="@PagedList.Core.Mvc.PagedListRenderOptions.ClassicPlusFirstAndLast" list="@Model.Schedules" asp-action="Index" asp-controller="Person" asp-all-route-data='Context.Request.Query.Where(q => q.Key != "page").ToDictionary(q => q.Key, q => q.Value.ToString())' />
+Page @(Model.Schedules.PageCount < Model.Schedules.PageNumber ? 0 : Model.Schedules.PageNumber) of @Model.Schedules.PageCount (@Model.Schedules.TotalItemCount)
+<table class="table">
+  <thead>
+    <tr>
+      <td>Start At</td>
+      <td>End At</td>
+      <td>Responsible</td>
+      <td>Flagged as busy?</td>
+      <td>Action</td>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Model.Schedules) {
+    <tr>
+      <td>@Html.DisplayFor(modelItem => item.StartAt)</td>
+      <td>@Html.DisplayFor(modelItem => item.EndAt)</td>
+      <td>@Html.DisplayFor(modelItem => item.Responsible.Name)</td>
+      <td>@(item.IsBusy ? "Yes" : "No")</td>
+      <td><a class="btn btn-default" asp-controller="Schedule" asp-action="Edit" asp-route-id="@item.Id">Edit</a> <a class="btn btn-default" asp-controller="Schedule" asp-action="Delete" data-confirm="are u sure?" asp-route-id="@item.Id">Delete</a> </td>
+    </tr>
+    }
+  </tbody>
+</table>
+<pager class="pager-container" options="@PagedList.Core.Mvc.PagedListRenderOptions.ClassicPlusFirstAndLast" list="@Model.Schedules" asp-action="Index" asp-controller="Person" asp-all-route-data='Context.Request.Query.Where(q => q.Key != "page").ToDictionary(q => q.Key, q => q.Value.ToString())' />

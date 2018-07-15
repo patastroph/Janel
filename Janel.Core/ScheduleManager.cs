@@ -14,19 +14,60 @@ namespace Janel.Core {
     }
 
     public void AddSchedule(Person responsible, DateTime startDate, DateTime endDate) {
-      var conflicts = _unitOfWork.ScheduleRepository.GetList().Where(s => (s.StartAt == null || s.StartAt <= startDate) && (s.EndAt == null || s.EndAt >= endDate));
+      var conflicts = HasConflicts(startDate, endDate);
 
       if (conflicts.Any()) {
         throw new Exception("There is a conflict with this schedule. Please validate Start Date and End Date");
       }
-
+      
       var schedule = new Schedule {
         Responsible = responsible,
         StartAt = startDate,
         EndAt = endDate
       };
 
+      ValidateSchedule(schedule);
+
       _unitOfWork.ScheduleRepository.Insert(schedule);
+    }
+
+    
+
+    public void AddSchedule(Guid responsibleId, DateTime startDate, DateTime endDate) {
+      var responsible = _unitOfWork.PersonRepository.GetById(responsibleId);
+
+      AddSchedule(responsible, startDate, endDate);
+    }
+
+    public void EditSchedule(Guid scheduleId, Guid responsibleId, DateTime startAt, DateTime endAt) {
+      var schedule = _unitOfWork.ScheduleRepository.GetById(scheduleId);
+      var responsible = _unitOfWork.PersonRepository.GetById(responsibleId);
+
+      schedule.Responsible = responsible;
+      schedule.StartAt = startAt;
+      schedule.EndAt = endAt;
+
+      EditSchedule(schedule);
+    }
+
+    public void EditSchedule(Schedule schedule) {
+      var conflicts = HasConflicts(schedule.StartAt, schedule.EndAt);
+
+      if (conflicts.Where(s => !s.Id.Equals(schedule.Id)).Any()) {
+        throw new Exception("There is a conflict with this schedule. Please validate Start Date and End Date");
+      }
+
+      ValidateSchedule(schedule);
+
+      _unitOfWork.ScheduleRepository.Update(schedule);
+    }
+    
+    public IQueryable<Schedule> GetAll(bool showPastSchedules, Guid? personId) {
+      if (personId.HasValue) {
+        return _unitOfWork.ScheduleRepository.GetList().Where(s => (showPastSchedules || s.EndAt >= _dateTimeManager.GetNow()) && s.Responsible.Id.Equals(personId.Value));
+      }
+
+      return _unitOfWork.ScheduleRepository.GetList().Where(s => (showPastSchedules || s.EndAt >= _dateTimeManager.GetNow()));
     }
 
     public Person GetEscalatePerson() {
@@ -73,6 +114,10 @@ namespace Janel.Core {
       return schedule.Responsible;
     }
 
+    public Schedule GetSchedule(Guid id) {
+      return _unitOfWork.ScheduleRepository.GetById(id);
+    }
+
     public void RemoveSchedule(Person responsible, DateTime startDate, DateTime endDate) {
       var schedule = _unitOfWork.ScheduleRepository.GetList().Where(s => (s.StartAt == null || s.StartAt <= startDate) && (s.EndAt == null || s.EndAt >= endDate) && s.Responsible.Id.Equals(responsible.Id)).FirstOrDefault();
 
@@ -84,7 +129,11 @@ namespace Janel.Core {
     }
 
     public void RemoveSchedule(Schedule schedule) {
-      _unitOfWork.ScheduleRepository.Delete(schedule.Id.Value);
+      RemoveSchedule(schedule.Id.Value);
+    }
+
+    public void RemoveSchedule(Guid scheduleId) {
+      _unitOfWork.ScheduleRepository.Delete(scheduleId);
     }
 
     public void SetPersonAsBack(Person responsible) {
@@ -111,6 +160,17 @@ namespace Janel.Core {
       } else {
         throw new Exception($"Active schedule not found for {responsible.Name}");
       }
+    }
+
+    private void ValidateSchedule(Schedule schedule) {
+      if (schedule.EndAt <= schedule.StartAt) {
+        throw new ArgumentException("Start At must be before End At");
+      }
+    }
+
+    private IQueryable<Schedule> HasConflicts(DateTime startDate, DateTime endDate) {
+      return _unitOfWork.ScheduleRepository.GetList().Where(s => ((s.StartAt == null || s.StartAt <= startDate) && (s.EndAt == null || s.EndAt >= endDate)) ||
+                                                                 ((s.StartAt == null || startDate <= s.StartAt) && (s.EndAt == null || endDate >= s.EndAt)));
     }
   }
 }
