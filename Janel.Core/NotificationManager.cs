@@ -147,6 +147,13 @@ namespace Janel.Core {
 
             break;
           case CommunicationType.PhoneCall:
+            TwilioClient.Init(twilioAccountSID, twilioCredentials);
+
+            var call = CallResource.Create(
+                url: new Uri("http://demo.twilio.com/docs/voice.xml"),
+                to: new Twilio.Types.PhoneNumber(phoneNumber),
+                from: new Twilio.Types.PhoneNumber(to.PhoneNumber)
+            );
 
             break;
           case CommunicationType.Email:
