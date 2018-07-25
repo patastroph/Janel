@@ -1,28 +1,37 @@
 ﻿using Janel.Contract.Repository;
 using Janel.Data;
+using MongoDB.Driver;
 using System;
+using System.Linq;
 
 namespace Janel.Repository {
-  public class ScheduleRepository : BaseMongoDbRepository<Schedule>, IScheduleRepository {
+  public class ScheduleRepository : BaseMongoDbRepository<Schedule, Data.Schedule>, IScheduleRepository {
     public override Schedule GetByName(string name) {
       throw new NotImplementedException();
     }
 
-    public override Schedule Update(Schedule item) {
-      SetDate(item);
-
-      return base.Update(item);
+    public override Data.Schedule BeforeSave(Schedule item) {
+      var concrete = base.BeforeSave(item);
+      concrete.ResponsibleId = item.Responsible.Id;
+      concrete.Responsible = null;
+      
+      return concrete;
     }
 
-    public override Schedule Insert(Schedule item) {
-      SetDate(item);
+    public override IQueryable<Schedule> GetList() {
+      var query = from s in database.GetCollection<Data.Schedule>(CollectionName).AsQueryable()
+                  join p in database.GetCollection<Person>(nameof(Person)).AsQueryable() on s.ResponsibleId equals p.Id into ps
+                  from p in ps.DefaultIfEmpty()
+                  select new Schedule {
+                    Id = s.Id,
+                    BusyReason = s.BusyReason,
+                    EndAt = s.EndAt,
+                    IsBusy = s.IsBusy,
+                    StartAt = s.StartAt,
+                    Responsible = p
+                  };
 
-      return base.Insert(item);
-    }
-
-    private void SetDate(Schedule schedule) {
-      schedule.StartAt = schedule.StartAt.ToUniversalTime();
-      schedule.EndAt = schedule.EndAt.ToUniversalTime();
+      return query;
     }
   }
 }
