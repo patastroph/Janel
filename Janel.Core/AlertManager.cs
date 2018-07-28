@@ -12,13 +12,15 @@ namespace Janel.Core {
     private static List<Alert> _pastAlerts = new List<Alert>();
     private readonly IScheduleManager _scheduleManager;
     private readonly INotificationManager _notificationManager;
+    private readonly IDateTimeManager _dateTimeManager;
 
     private IJanelUnitOfWork _unitOfWork { get; }
 
-    public AlertManager(IJanelUnitOfWork unitOfWork, IScheduleManager scheduleManager, INotificationManager notificationManager) {
+    public AlertManager(IJanelUnitOfWork unitOfWork, IScheduleManager scheduleManager, INotificationManager notificationManager, IDateTimeManager dateTimeManager) {
       _unitOfWork = unitOfWork;
       _scheduleManager = scheduleManager;
       _notificationManager = notificationManager;
+      _dateTimeManager = dateTimeManager;
     }
 
     public void RegisterEvents(IEventManager eventManager) {
@@ -61,6 +63,7 @@ namespace Janel.Core {
 
               alert.Status = StatusType.Transferring;
               alert.Description += $"\n\nAlert were escalated but was still not responded.";
+              alert.UpdatedAt = _dateTimeManager.GetNow();
 
               _unitOfWork.AlertRepository.Update(alert);
 
@@ -92,6 +95,7 @@ namespace Janel.Core {
 
         alert.Responsible = firstResponsible;
         alert.Status = StatusType.New;
+        alert.UpdatedAt = _dateTimeManager.GetNow();
 
         _unitOfWork.AlertRepository.Update(alert);
       } else {
@@ -112,6 +116,7 @@ namespace Janel.Core {
         JanelObserver.EventManager.Dispatch(new ErrorOccurred($"No one responded to alert {alert.Id}"));        
       } else {
         alert.Status = StatusType.Escalated;
+        alert.UpdatedAt = _dateTimeManager.GetNow();
 
         _unitOfWork.AlertRepository.Update(alert);
 
@@ -123,13 +128,16 @@ namespace Janel.Core {
       Alert alert;
       if ((alert = _ongoingAlerts.FirstOrDefault(a => a.Service.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) && a.Description.Equals(description, StringComparison.OrdinalIgnoreCase))) == null) {
 
-        alert = new Alert {
-          Severity = CalculateSeverity(alert),
-          ReceivedAt = DateTime.Now,
+        alert = new Alert {          
+          ReceivedAt = _dateTimeManager.GetNow(),
+          UpdatedAt = _dateTimeManager.GetNow(),
           Description = description,
           Service = _unitOfWork.ServiceRepository.GetByName(serviceName) ?? _unitOfWork.ServiceRepository.Insert(new Service { Name = serviceName, Location = serviceInfo, Ip = serviceIp }),
-          NbReceived = 1
+          NbReceived = 1,
+          Severity = severity
         };
+
+        alert.Severity = CalculateSeverity(alert);
 
         _ongoingAlerts.Add(alert);
 
@@ -149,6 +157,7 @@ namespace Janel.Core {
 
       alert.Responsible = responsible;
       alert.Status = StatusType.Acknowledge;
+      alert.UpdatedAt = _dateTimeManager.GetNow();
 
       _unitOfWork.AlertRepository.Update(alert);
       JanelObserver.EventManager.Dispatch(new AlertChanged(alert, StatusType.Acknowledge.ToString(), responsible.Name));
@@ -161,6 +170,7 @@ namespace Janel.Core {
 
       alert.CompletedAt = DateTime.Now;
       alert.Status = StatusType.Fixed;
+      alert.UpdatedAt = _dateTimeManager.GetNow();
 
       _unitOfWork.AlertRepository.Update(alert);
       JanelObserver.EventManager.Dispatch(new AlertChanged(alert, StatusType.Fixed.ToString(), responsible.Name));
@@ -177,6 +187,7 @@ namespace Janel.Core {
 
       alert.CompletedAt = DateTime.Now;
       alert.Status = StatusType.Closed;
+      alert.UpdatedAt = _dateTimeManager.GetNow();
 
       _unitOfWork.AlertRepository.Update(alert);
 
@@ -196,6 +207,7 @@ namespace Janel.Core {
 
       alert.Status = StatusType.Transferring;
       alert.Description += $"\n\n {responsible.Name} cannot take it because {reason.ToString()}";
+      alert.UpdatedAt = _dateTimeManager.GetNow();
 
       _unitOfWork.AlertRepository.Update(alert);
 

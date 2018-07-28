@@ -93,7 +93,7 @@ namespace Janel.Core {
 
       var message = $"Alert received from {arg.Alert.Service.Name}, on {DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")}. Message : {arg.Alert.Description}";
 
-      return SendNotificationWithAcknowledge(sentDate, responsible, responsible.PreferedCommunications.First(), message, null, arg.Alert);         
+      return SendNotificationWithAcknowledge(sentDate, responsible, (responsible.PreferedCommunications?.First() ?? CommunicationType.Email), message, null, arg.Alert);         
     }
 
     private IEnumerable<Message> SendNotificationWithAcknowledge(DateTime sentDate, Person to, CommunicationType communicationType, string message, Notification notification, object source) {

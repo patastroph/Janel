@@ -1,0 +1,7 @@
+﻿@model Janel.Data.CommunicationType
+@{
+  Layout = null;
+}
+<div class="form-group">
+  @Html.DropDownListFor(m => m, Html.GetEnumSelectList<Janel.Data.CommunicationType>(), "", new { @class = "form-control" })
+</div>

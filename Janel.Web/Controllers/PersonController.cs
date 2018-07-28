@@ -4,6 +4,7 @@ using Janel.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using PagedList.Core;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Janel.Web.Controllers {
@@ -27,7 +28,18 @@ namespace Janel.Web.Controllers {
     }
 
     public IActionResult Edit(Guid id) {
-      return View(_personManager.GetPerson(id));
+      var model = _personManager.GetPerson(id);
+
+      if (model.PreferedCommunications == null) {
+        model.PreferedCommunications = new List<CommunicationType>();
+      }
+      var communications = Enum.GetValues(typeof(CommunicationType)).Cast<CommunicationType>();
+
+      for (var i = model.PreferedCommunications.Count; i < communications.Count(); i++) {
+        model.PreferedCommunications.Add(communications.ElementAt(i));
+      }      
+
+      return View(model);
     }
 
     public IActionResult Delete(Guid id) {

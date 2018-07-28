@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 namespace Janel.Data {
   public class Alert : Entity {
+    public Alert() {
+      Actors = new List<Person>();
+      NotificationsSent = new List<DateTime>();
+    }
+
     public string Description { get; set; }
     public SeverityType Severity { get; set; }
     public StatusType Status { get; set; }

@@ -3,6 +3,10 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Janel.Data {
   public class Person : Entity {
+    public Person() {
+      PreferedCommunications = new List<CommunicationType>();
+    }
+
     [Required]
     public string Name { get; set; }
     [Required]

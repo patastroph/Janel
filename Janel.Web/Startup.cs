@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Observer.Core;
 
 namespace Janel.Web {
   public class Startup {
@@ -26,11 +27,15 @@ namespace Janel.Web {
       services.AddScoped<IScheduleManager, ScheduleManager>();
       services.AddScoped<IJanelUnitOfWork, JanelUnitOfWork>();
 
+      services.AddTransient<IEventListener, AlertManager>();
+      services.AddTransient<IEventListener, Core.EventManager>();
+      services.AddTransient<IEventListener, NotificationManager>();
+
       services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+      
+      JanelObserver.RegisterAllEvents(services.BuildServiceProvider());
 
       services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, BackgroundTask>();
-
-      JanelObserver.RegisterAllEvents(services.BuildServiceProvider());
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

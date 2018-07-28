@@ -11,7 +11,8 @@ namespace Janel.Web.Controllers {
     }
 
     public ActionResult RegisterAlert(string description, string serviceName, string serviceInfo, string serviceIp, SeverityType severity = SeverityType.Unknown) {
-      _alertManager.LogAlert(description, serviceInfo, serviceInfo, serviceIp, severity);
+      //http://localhost:55378/Api/RegisterAlert?description=Test%20Alert&serviceName=Serv1&serviceInfo=Magento&serviceIP=127.0.0.1
+      _alertManager.LogAlert(description, serviceName, serviceInfo, serviceIp, severity);
 
       return Ok();
     }
