@@ -1,0 +1,47 @@
+﻿@model Janel.Data.Person
+
+@{
+    ViewData["Title"] = "Call";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Call @Html.DisplayFor(model => model.Name)</h2>
+<form asp-action="ConfirmCall">
+  <input name="personId" asp-for="Id" type="hidden" />
+  <div>
+    <hr />
+    <dl class="dl-horizontal">
+      <dt>
+        @Html.DisplayNameFor(model => model.Email)
+      </dt>
+      <dd>
+        @Html.DisplayFor(model => model.Email)
+      </dd>
+      <dt>
+        @Html.DisplayNameFor(model => model.PhoneNumber)
+      </dt>
+      <dd>
+        @Html.DisplayFor(model => model.PhoneNumber)
+      </dd>
+
+      <dt>
+        <label for="Message">Send a message by</label>
+      </dt>
+      <dd>
+        <select name="communicationType" asp-items="Html.GetEnumSelectList<Janel.Data.CommunicationType>()" data-selected="@((int)Model.PreferedCommunications.First())"></select>        
+      </dd>      
+      <dt>
+        <label for="Message">Message</label>
+      </dt>
+      <dd>
+        <textarea name="message" required cols="50" rows="5"></textarea>
+      </dd>
+      <dd><input type="submit" data-confirm="Are u sure?" /></dd>
+    </dl>
+  </div>
+
+  
+</form>
+<div>    
+    <a asp-action="Index">Back to List</a>
+</div>

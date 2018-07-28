@@ -224,6 +224,8 @@ namespace Janel.Core {
       return SeverityType.Moderate;
     }
 
-
+    public List<string> GetAlertPossibleActions(Alert alert) {
+      return new List<string> { "Acknowledge", "CannotHandle", "Fixed", "Snooze", "Complete" };
+    }
   }
 }

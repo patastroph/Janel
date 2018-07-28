@@ -5,4 +5,11 @@ $(document).ready(function () {
       e.preventDefault();
     }
   });
+
+  jQuery('[data-selected]').each(function () {    
+    var val = jQuery(this).attr("data-selected");
+    console.log(val);
+    jQuery(this).val(val);
+  });
+  
 })

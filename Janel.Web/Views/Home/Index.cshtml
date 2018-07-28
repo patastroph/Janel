@@ -11,8 +11,8 @@
 
 <form asp-action="Call" method="post">
   <label>Person :</label>
-  <select asp-items="@(new SelectList(Model.People, "Id", "Name"))"><option /></select>
-  <input type="submit" value="Call" data-confirm="Are you sure with want to call?"/>
+  <select name="personId" asp-items="@(new SelectList(Model.People, "Id", "Name"))"><option /></select>
+  <input type="submit" value="Call"/>
 </form>
 
 <pager class="pager-container" options="@PagedList.Core.Mvc.PagedListRenderOptions.ClassicPlusFirstAndLast" list="@Model.Alerts" asp-action="Index" asp-controller="Home" asp-all-route-data='Context.Request.Query.Where(q => q.Key != "page").ToDictionary(q => q.Key, q => q.Value.ToString())' />
@@ -31,13 +31,13 @@ Page @(Model.Alerts.PageCount < Model.Alerts.PageNumber ? 0 : Model.Alerts.PageN
   <tbody>
     @foreach (var item in Model.Alerts) {
     <tr>
-      <td>@Html.DisplayFor(modelItem => item.Description)</td>
-      <td>@Html.DisplayFor(modelItem => item.Service.Name)</td>
-      <td>@Html.DisplayFor(modelItem => item.Status)</td>
-      <td>@Html.DisplayFor(modelItem => item.ReceivedAt)</td>
-      <td>@Html.DisplayFor(modelItem => item.Responsible.Name)</td>      
-      <td>@Html.DisplayFor(modelItem => item.UpdatedAt)</td>
-      <td><a class="btn btn-default" asp-controller="Schedule" asp-action="Edit" asp-route-id="@item.Id">Edit</a> <a class="btn btn-default" asp-controller="Schedule" asp-action="Delete" data-confirm="are u sure?" asp-route-id="@item.Id">Delete</a> </td>
+      <td>@Html.DisplayFor(modelItem => item.Alert.Description)</td>
+      <td>@Html.DisplayFor(modelItem => item.Alert.Service.Name)</td>
+      <td>@Html.DisplayFor(modelItem => item.Alert.Status)</td>
+      <td>@Html.DisplayFor(modelItem => item.Alert.ReceivedAt)</td>
+      <td>@Html.DisplayFor(modelItem => item.Alert.Responsible.Name)</td>      
+      <td>@Html.DisplayFor(modelItem => item.Alert.UpdatedAt)</td>
+      <td><form asp-action="TakeAction"><input type="hidden" asp-for="@item.Alert.Id" /><select asp-for="@item.SelectedAction" asp-items="@(new SelectList(item.PossibleActions))"><option /></select> <input type="submit" data-confirm="Are u sure?"/></form></td>
     </tr>
     }
   </tbody>
