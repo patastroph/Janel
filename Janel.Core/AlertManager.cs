@@ -22,11 +22,20 @@ namespace Janel.Core {
     }
 
     public void RegisterEvents(IEventManager eventManager) {
+      eventManager.Register<AppStarting>().To(OnAppStarted);
       eventManager.Register<NotificationNotResponded>().To(OnAlertNotResponded).When(n => n.Notification.Source is Alert);
       eventManager.Register<NotificationAcknowledge>().To(Acknowledge).When(n => n.Notification.Source is Alert);
       eventManager.Register<TaskTimerElapsed>().To(ValidatePendingAlerts).When(t => t.MinuteElapsed == 5);
     }
-    
+
+    private IEnumerable<Message> OnAppStarted(AppStarting arg) {
+      var ongoingAlerts = _unitOfWork.AlertRepository.GetList().Where(a => a.Status != StatusType.Closed);
+
+      _ongoingAlerts.AddRange(ongoingAlerts);
+
+      return JanelObserver.Success();
+    }
+
     public List<Alert> GetOngoingAlerts() {
       return _ongoingAlerts;
     }
@@ -105,6 +114,7 @@ namespace Janel.Core {
         alert.Status = StatusType.Escalated;
 
         _unitOfWork.AlertRepository.Update(alert);
+
         JanelObserver.EventManager.Dispatch(new AlertEscalated(alert, escalatePerson));
       }      
     }

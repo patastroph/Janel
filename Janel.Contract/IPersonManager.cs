@@ -8,7 +8,6 @@ namespace Janel.Contract {
     IQueryable<Person> GetPersonList();
     void Save(Person person);
     void Delete(Guid id);
-    void Delete(Person person);
-    IQueryable<Person> GetAll();
+    void Delete(Person person);    
   }
 }

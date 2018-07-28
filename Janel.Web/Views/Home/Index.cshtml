@@ -1,3 +1,45 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model  AlertListViewModel
+
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+@{
+  ViewData["Title"] = "Alert List";
+  Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
+<h2>Alerts</h2>
+
+<form asp-action="Call" method="post">
+  <label>Person :</label>
+  <select asp-items="@(new SelectList(Model.People, "Id", "Name"))"><option /></select>
+  <input type="submit" value="Call" data-confirm="Are you sure with want to call?"/>
+</form>
+
+<pager class="pager-container" options="@PagedList.Core.Mvc.PagedListRenderOptions.ClassicPlusFirstAndLast" list="@Model.Alerts" asp-action="Index" asp-controller="Home" asp-all-route-data='Context.Request.Query.Where(q => q.Key != "page").ToDictionary(q => q.Key, q => q.Value.ToString())' />
+Page @(Model.Alerts.PageCount < Model.Alerts.PageNumber ? 0 : Model.Alerts.PageNumber) of @Model.Alerts.PageCount (@Model.Alerts.TotalItemCount)
+<table class="table">
+  <thead>
+    <tr>
+      <td>Description</td>
+      <td>Service</td>
+      <td>Status</td>
+      <td>Received At</td>
+      <td>Responsible</td>
+      <td>Updated At</td>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var item in Model.Alerts) {
+    <tr>
+      <td>@Html.DisplayFor(modelItem => item.Description)</td>
+      <td>@Html.DisplayFor(modelItem => item.Service.Name)</td>
+      <td>@Html.DisplayFor(modelItem => item.Status)</td>
+      <td>@Html.DisplayFor(modelItem => item.ReceivedAt)</td>
+      <td>@Html.DisplayFor(modelItem => item.Responsible.Name)</td>      
+      <td>@Html.DisplayFor(modelItem => item.UpdatedAt)</td>
+      <td><a class="btn btn-default" asp-controller="Schedule" asp-action="Edit" asp-route-id="@item.Id">Edit</a> <a class="btn btn-default" asp-controller="Schedule" asp-action="Delete" data-confirm="are u sure?" asp-route-id="@item.Id">Delete</a> </td>
+    </tr>
+    }
+  </tbody>
+</table>
+<pager class="pager-container" options="@PagedList.Core.Mvc.PagedListRenderOptions.ClassicPlusFirstAndLast" list="@Model.Alerts" asp-action="Index" asp-controller="Home" asp-all-route-data='Context.Request.Query.Where(q => q.Key != "page").ToDictionary(q => q.Key, q => q.Value.ToString())' />

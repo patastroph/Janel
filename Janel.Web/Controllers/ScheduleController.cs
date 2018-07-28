@@ -26,7 +26,7 @@ namespace Janel.Web.Controllers {
         PageSize = pageSize,
         ShowPastSchedules = showPastSchedules,
         PersonId = personId,
-        People = _personManager.GetAll().OrderBy(p => p.Name).ToList(),
+        People = _personManager.GetPersonList().OrderBy(p => p.Name).ToList(),
         Schedules = new PagedList<Schedule>(schedules, pageNumber, pageSize)
       };
 
@@ -36,7 +36,7 @@ namespace Janel.Web.Controllers {
     // GET: Schedule/Add
     public ActionResult Add() {
       var viewModel = new ScheduleEditViewModel {
-        People = _personManager.GetAll().OrderBy(p => p.Name).ToList()
+        People = _personManager.GetPersonList().OrderBy(p => p.Name).ToList()
       };
 
       return View(nameof(Edit), viewModel);
@@ -58,13 +58,13 @@ namespace Janel.Web.Controllers {
           return RedirectToAction(nameof(Index));
         }
 
-        viewModel.People = _personManager.GetAll().OrderBy(p => p.Name).ToList();
+        viewModel.People = _personManager.GetPersonList().OrderBy(p => p.Name).ToList();
 
         return View(nameof(Edit), viewModel);
       } catch (Exception exc) {
         ModelState.AddModelError("", exc.Message);
 
-        viewModel.People = _personManager.GetAll().OrderBy(p => p.Name).ToList();
+        viewModel.People = _personManager.GetPersonList().OrderBy(p => p.Name).ToList();
 
         return View(nameof(Edit), viewModel);
       }
@@ -79,7 +79,7 @@ namespace Janel.Web.Controllers {
         StartAt = schedule?.StartAt,
         EndAt = schedule?.EndAt,
         ResponsibleId = schedule?.Responsible?.Id,
-        People = _personManager.GetAll().OrderBy(p => p.Name).ToList()
+        People = _personManager.GetPersonList().OrderBy(p => p.Name).ToList()
       };
 
       return View(viewModel);

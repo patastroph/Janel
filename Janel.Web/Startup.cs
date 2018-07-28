@@ -20,6 +20,8 @@ namespace Janel.Web {
       services.AddMvc();
 
       services.AddScoped<IDateTimeManager, DateTimeManager>();
+      services.AddScoped<IAlertManager, AlertManager>();
+      services.AddScoped<INotificationManager, NotificationManager>();
       services.AddScoped<IPersonManager, PersonManager>();
       services.AddScoped<IScheduleManager, ScheduleManager>();
       services.AddScoped<IJanelUnitOfWork, JanelUnitOfWork>();

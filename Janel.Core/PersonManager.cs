@@ -18,11 +18,7 @@ namespace Janel.Core {
     public void Delete(Person person) {
       _unitOfWork.PersonRepository.Delete(person);
     }
-
-    public IQueryable<Person> GetAll() {
-      return _unitOfWork.PersonRepository.GetList();
-    }
-
+    
     public Person GetPerson(Guid id) {
       return _unitOfWork.PersonRepository.GetById(id);
     }
