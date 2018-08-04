@@ -13,7 +13,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janel.Data", "Janel.Data\Ja
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janel.Web", "Janel.Web\Janel.Web.csproj", "{F7C0E78C-672C-4723-BD10-9037C1F6BB23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janel.Test", "Janel.Test\Janel.Test.csproj", "{D1D016DD-BC97-4133-BF1D-C2FECE75EB3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Janel.Test", "Janel.Test\Janel.Test.csproj", "{D1D016DD-BC97-4133-BF1D-C2FECE75EB3E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Janel.Membership", "Janel.Membership\Janel.Membership.csproj", "{5CADA768-9214-47CF-9B1B-83458BB00710}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{D1D016DD-BC97-4133-BF1D-C2FECE75EB3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D1D016DD-BC97-4133-BF1D-C2FECE75EB3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D1D016DD-BC97-4133-BF1D-C2FECE75EB3E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CADA768-9214-47CF-9B1B-83458BB00710}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CADA768-9214-47CF-9B1B-83458BB00710}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CADA768-9214-47CF-9B1B-83458BB00710}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CADA768-9214-47CF-9B1B-83458BB00710}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

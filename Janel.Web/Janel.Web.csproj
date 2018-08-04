@@ -18,6 +18,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Janel.Contract\Janel.Contract.csproj" />
     <ProjectReference Include="..\Janel.Core\Janel.Core.csproj" />
+    <ProjectReference Include="..\Janel.Membership\Janel.Membership.csproj" />
     <ProjectReference Include="..\Janel.Repository\Janel.Repository.csproj" />
   </ItemGroup>
 

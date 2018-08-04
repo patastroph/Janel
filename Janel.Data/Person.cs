@@ -16,5 +16,8 @@ namespace Janel.Data {
     public string PhoneNumber { get; set; }
     public int Level { get; set; }
     public List<CommunicationType> PreferedCommunications { get; set; }
+    public string Password { get; set; }
+    public bool EmailConfirmed { get; set; }
+    public bool TwoFactorEnabled { get; set; }
   }
 }

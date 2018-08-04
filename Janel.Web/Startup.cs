@@ -1,9 +1,13 @@
 ﻿using Janel.Contract;
 using Janel.Core;
+using Janel.Data;
+using Janel.Membership;
 using Janel.Repository;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Observer.Core;
@@ -19,6 +23,16 @@ namespace Janel.Web {
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services) {
       services.AddMvc();
+
+      services.AddIdentity<Person, IdentityRole>()
+                .AddUserStore<UserStore>()
+                .AddRoleStore<RoleStore>()
+                .AddDefaultTokenProviders();
+
+      /*services.AddAuthentication()
+              .AddGoogle(g => {
+                g.
+              });*/
 
       services.AddScoped<IDateTimeManager, DateTimeManager>();
       services.AddScoped<IAlertManager, AlertManager>();
@@ -48,6 +62,8 @@ namespace Janel.Web {
       }
 
       app.UseStaticFiles();
+
+      app.UseAuthentication();
 
       app.UseMvc(routes => {
         routes.MapRoute(

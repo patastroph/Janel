@@ -9,8 +9,7 @@ using MongoDB.Driver;
 
 namespace Janel.Repository {
   public abstract class BaseMongoDbRepository<BaseType, ConcreteType> : IBaseRepository<BaseType> where BaseType : Entity, new() where ConcreteType : BaseType, new() {
-    protected const string connectionString = "mongodb://localhost";
-    protected IMongoDatabase database => new MongoClient(connectionString).GetDatabase(AppDomain.CurrentDomain.FriendlyName.Replace(".", ""));
+    protected IMongoDatabase database => new MongoClient(Configuration.ConnectionString).GetDatabase(AppDomain.CurrentDomain.FriendlyName.Replace(".", ""));
     internal virtual string CollectionName => typeof(BaseType).Name; 
     
     public BaseMongoDbRepository() {

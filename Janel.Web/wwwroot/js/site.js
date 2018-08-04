@@ -7,8 +7,7 @@ $(document).ready(function () {
   });
 
   jQuery('[data-selected]').each(function () {    
-    var val = jQuery(this).attr("data-selected");
-    console.log(val);
+    var val = jQuery(this).attr("data-selected");    
     jQuery(this).val(val);
   });
   

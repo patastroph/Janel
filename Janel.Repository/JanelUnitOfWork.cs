@@ -14,5 +14,7 @@ namespace Janel.Repository {
     public INotificationRepository NotificationRepository => new NotificationRepository();
 
     public IScheduleRepository ScheduleRepository => new ScheduleRepository();
+
+    public IRoleRepository RoleRepository => new RoleRepository();
   }
 }

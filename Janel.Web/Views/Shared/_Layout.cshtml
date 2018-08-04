@@ -29,10 +29,11 @@
                 <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Janel.Web</a>
             </div>
             <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">      
-                    <li><a asp-area="" asp-controller="Schedule" asp-action="Index">Schedules</a></li>
-                    <li><a asp-area="" asp-controller="Person" asp-action="Index">People</a></li>
-                </ul>
+              <ul class="nav navbar-nav">
+                <li><a asp-area="" asp-controller="Schedule" asp-action="Index">Schedules</a></li>
+                <li><a asp-area="" asp-controller="Person" asp-action="Index">People</a></li>
+              </ul>
+              @await Html.PartialAsync("_LoginPartial")
             </div>
         </div>
     </nav>
