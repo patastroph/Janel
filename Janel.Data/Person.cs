@@ -7,17 +7,14 @@ namespace Janel.Data {
       PreferedCommunications = new List<CommunicationType>();
     }
 
-    [Required]
     public string Name { get; set; }
-    [Required]
-    [EmailAddress]
     public string Email { get; set; }
-    [Phone]
     public string PhoneNumber { get; set; }
     public int Level { get; set; }
     public List<CommunicationType> PreferedCommunications { get; set; }
     public string Password { get; set; }
     public bool EmailConfirmed { get; set; }
     public bool TwoFactorEnabled { get; set; }
+    public bool PhoneNumberConfirmed { get; set; }
   }
 }

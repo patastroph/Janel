@@ -7,6 +7,7 @@ using Janel.Data;
 using PagedList.Core;
 using System.Collections.Generic;
 using System;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Janel.Web.Controllers {
   public class HomeController : Controller {
@@ -19,7 +20,7 @@ namespace Janel.Web.Controllers {
       _alertManager = alertManager;
       _notificationManager = notificationManager;
     }
-
+    
     public IActionResult Index(int pageNumber = 1, int pageSize = 10) {
       var alertViewModel = _alertManager.GetOngoingAlerts()
                                           .Select(a => new AlertViewModel { Alert = a, PossibleActions = _alertManager.GetAlertPossibleActions(a) })

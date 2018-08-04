@@ -1,11 +1,16 @@
-﻿using Janel.Contract;
+﻿using System;
+using AutoMapper;
+using Janel.Contract;
 using Janel.Core;
 using Janel.Data;
 using Janel.Membership;
 using Janel.Repository;
+using Janel.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -22,17 +27,21 @@ namespace Janel.Web {
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services) {
-      services.AddMvc();
+      services.AddMvc(o =>
+      {
+        var policy = new AuthorizationPolicyBuilder()
+            .RequireAuthenticatedUser()
+            .Build();
+        o.Filters.Add(new AuthorizeFilter(policy));
+      });
 
-      services.AddIdentity<Person, IdentityRole>()
+      services.AddIdentity<Person, IdentityRole>(config => 
+      {
+        config.User.RequireUniqueEmail = true;        
+      })
                 .AddUserStore<UserStore>()
                 .AddRoleStore<RoleStore>()
                 .AddDefaultTokenProviders();
-
-      /*services.AddAuthentication()
-              .AddGoogle(g => {
-                g.
-              });*/
 
       services.AddScoped<IDateTimeManager, DateTimeManager>();
       services.AddScoped<IAlertManager, AlertManager>();
@@ -50,6 +59,14 @@ namespace Janel.Web {
       JanelObserver.RegisterAllEvents(services.BuildServiceProvider());
 
       services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, BackgroundTask>();
+
+      SetupAutoMapper();
+    }
+
+    private void SetupAutoMapper() {
+      Mapper.Initialize(cfg => {
+        cfg.CreateMap<Person, PersonEditViewModel>().ReverseMap();        
+      });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

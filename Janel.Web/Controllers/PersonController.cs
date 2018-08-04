@@ -1,4 +1,5 @@
-﻿using Janel.Contract;
+﻿using AutoMapper;
+using Janel.Contract;
 using Janel.Data;
 using Janel.Web.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,7 @@ namespace Janel.Web.Controllers {
     }
 
     public IActionResult Edit(Guid id) {
-      var model = _personManager.GetPerson(id);
+      var model = AutoMapper.Mapper.Map<PersonEditViewModel>(_personManager.GetPerson(id));
 
       if (model.PreferedCommunications == null) {
         model.PreferedCommunications = new List<CommunicationType>();
@@ -53,9 +54,12 @@ namespace Janel.Web.Controllers {
     }
 
     [HttpPost]
-    public IActionResult Save(Person person) {
-      if (ModelState.IsValid) { 
-        _personManager.Save(person);
+    public IActionResult Save(PersonEditViewModel person) {
+      if (ModelState.IsValid) {
+        var personModel = person.Id.HasValue ? _personManager.GetPerson(person.Id.Value) : new Person();
+        var mappedModel = Mapper.Map(person, personModel, typeof(PersonEditViewModel), typeof(Person)) as Person;
+
+        _personManager.Save(mappedModel);
 
         return RedirectToAction(nameof(Index));
       }
