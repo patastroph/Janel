@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Janel.Contract;
 using Janel.Core;
 using Janel.Data;
@@ -12,7 +11,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Observer.Core;
@@ -27,35 +25,17 @@ namespace Janel.Web {
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services) {
-      services.AddMvc(o =>
-      {
+      services.AddMvc(o => {
         var policy = new AuthorizationPolicyBuilder()
             .RequireAuthenticatedUser()
             .Build();
         o.Filters.Add(new AuthorizeFilter(policy));
       });
 
-      services.AddIdentity<Person, IdentityRole>(config => 
-      {
-        config.User.RequireUniqueEmail = true;        
-      })
-                .AddUserStore<UserStore>()
-                .AddRoleStore<RoleStore>()
-                .AddDefaultTokenProviders();
+      services.ConfigureIdentity();
 
-      services.AddScoped<IDateTimeManager, DateTimeManager>();
-      services.AddScoped<IAlertManager, AlertManager>();
-      services.AddScoped<INotificationManager, NotificationManager>();
-      services.AddScoped<IPersonManager, PersonManager>();
-      services.AddScoped<IScheduleManager, ScheduleManager>();
-      services.AddScoped<IJanelUnitOfWork, JanelUnitOfWork>();
+      services.ConfigureIoC();
 
-      services.AddTransient<IEventListener, AlertManager>();
-      services.AddTransient<IEventListener, Core.EventManager>();
-      services.AddTransient<IEventListener, NotificationManager>();
-
-      services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
-      
       JanelObserver.RegisterAllEvents(services.BuildServiceProvider());
 
       services.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, BackgroundTask>();
@@ -65,7 +45,7 @@ namespace Janel.Web {
 
     private void SetupAutoMapper() {
       Mapper.Initialize(cfg => {
-        cfg.CreateMap<Person, PersonEditViewModel>().ReverseMap();        
+        cfg.CreateMap<Person, PersonEditViewModel>().ReverseMap();
       });
     }
 
@@ -87,6 +67,37 @@ namespace Janel.Web {
             name: "default",
             template: "{controller=Home}/{action=Index}/{id?}");
       });
+    }
+  }
+
+  public static class StartupExtensions {
+    public static IServiceCollection ConfigureIdentity(this IServiceCollection services) {
+      services.AddIdentity<Person, IdentityRole>(config => {
+        config.User.RequireUniqueEmail = true;
+      })
+                .AddUserStore<UserStore>()
+                .AddRoleStore<RoleStore>()
+                .AddDefaultTokenProviders();
+
+      return services;
+    }
+
+
+    public static IServiceCollection ConfigureIoC(this IServiceCollection services) {
+      services.AddScoped<IDateTimeManager, DateTimeManager>();
+      services.AddScoped<IAlertManager, AlertManager>();
+      services.AddScoped<INotificationManager, NotificationManager>();
+      services.AddScoped<IPersonManager, PersonManager>();
+      services.AddScoped<IScheduleManager, ScheduleManager>();
+      services.AddScoped<IJanelUnitOfWork, JanelUnitOfWork>();
+
+      services.AddTransient<IEventListener, AlertManager>();
+      services.AddTransient<IEventListener, Core.EventManager>();
+      services.AddTransient<IEventListener, NotificationManager>();
+
+      services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
+      return services;
     }
   }
 }

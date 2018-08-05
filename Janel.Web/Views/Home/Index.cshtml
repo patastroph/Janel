@@ -7,6 +7,28 @@
   Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+
+
+<div class="row">
+  <div class="col-md-6">
+    <h2>Current Responsible</h2>
+    <ul>
+      <li>@(Model.CurrentResponsibleIsLoggedUser ? "You" : (Model.CurrentResponsible?.Name ?? "Not set"))</li>
+      @if (Model.CurrentResponsible != null) { 
+      <li>From : @Html.DisplayFor(modelItem => modelItem.CurrentResponsibleStartDate)</li>
+      <li>To : @Html.DisplayFor(modelItem => modelItem.CurrentResponsibleEndDate)</li>
+      <li>Status : @(Model.CurrentResponsibleStatus.HasValue && Model.CurrentResponsibleStatus.Value ? "Not available " + Model.CurrentResponsibleStatusComment : "Available")</li>
+      }
+    </ul>
+  </div>
+  <div class="col-md-6">
+    <h2>Next Responsible</h2>
+    <ul>
+      <li>@(Model.NextResponsibleIsLoggedUser ? "You" : (Model.NextResponsible?.Name ?? "Not set"))</li>      
+    </ul>
+  </div>
+</div>
+
 <h2>Alerts</h2>
 
 <form asp-action="Call" method="post">

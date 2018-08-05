@@ -79,7 +79,7 @@ namespace Janel.Core {
       var schedules = _unitOfWork.ScheduleRepository.GetList().Where(s => (s.StartAt <= now && s.EndAt >= now && !s.IsBusy) || s.StartAt > now).OrderBy(s => s.StartAt);
 
       if (!schedules.Any()) {
-        throw new Exception("No schedule founded for next person in charge");
+        return null;
       }
 
       if (schedules.Any(s => s.Responsible.Id.Equals(nextFromPerson.Id))) {
@@ -104,14 +104,7 @@ namespace Janel.Core {
     }
 
     public Person GetPersonInCharge() {
-      var now = _dateTimeManager.GetNow();
-      var schedule = _unitOfWork.ScheduleRepository.GetList().Where(s => (s.StartAt <= now && s.EndAt >= now && !s.IsBusy) || s.StartAt > now).OrderBy(s => s.StartAt).FirstOrDefault();
-       
-      if (schedule == null) {
-        throw new Exception("There is no responsible found");
-      }
-
-      return schedule.Responsible;
+      return GetCurrentSchedule()?.Responsible;
     }
 
     public Schedule GetSchedule(Guid id) {
@@ -171,6 +164,13 @@ namespace Janel.Core {
     private IQueryable<Schedule> HasConflicts(DateTime startDate, DateTime endDate) {
       return _unitOfWork.ScheduleRepository.GetList().Where(s => ((s.StartAt == null || s.StartAt <= startDate) && (s.EndAt == null || s.EndAt >= endDate)) ||
                                                                  ((s.StartAt == null || startDate <= s.StartAt) && (s.EndAt == null || endDate >= s.EndAt)));
+    }
+
+    public Schedule GetCurrentSchedule() {
+      var now = _dateTimeManager.GetNow();
+      var schedule = _unitOfWork.ScheduleRepository.GetList().Where(s => (s.StartAt <= now && s.EndAt >= now && !s.IsBusy) || s.StartAt > now).OrderBy(s => s.StartAt).FirstOrDefault();
+
+      return schedule;
     }
   }
 }

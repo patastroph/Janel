@@ -20,5 +20,7 @@ namespace Janel.Contract {
     void RemoveSchedule(Guid scheduleId);
     IQueryable<Schedule> GetAll(bool showPastSchedules, Guid? personId);
     Schedule GetSchedule(Guid id);
+    Schedule GetCurrentSchedule();
+    
   }
 }
