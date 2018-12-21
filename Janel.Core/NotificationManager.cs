@@ -14,17 +14,42 @@ namespace Janel.Core {
   public class NotificationManager : INotificationManager, IEventListener {
     private readonly IScheduleManager _scheduleManager;
     private readonly IJanelUnitOfWork _janelUnitOfWork;
+    private readonly IDateTimeManager _dateTimeManager;
     private List<Notification> _ongoingNotifications;
 
-    public NotificationManager(IScheduleManager scheduleManager, IJanelUnitOfWork janelUnitOfWork) {
+    public NotificationManager(IScheduleManager scheduleManager, IJanelUnitOfWork janelUnitOfWork, IDateTimeManager dateTimeManager) {
       _scheduleManager = scheduleManager;
       _janelUnitOfWork = janelUnitOfWork;
+      _dateTimeManager = dateTimeManager;
       _ongoingNotifications = new List<Notification>();
     }
 
     public void RegisterEvents(IEventManager eventManager) {
       eventManager.Register<AlertReceived>().To(OnAlertReceived);
+      eventManager.Register<MessageWithAcknowledge>().To(OnMessageWithAcknowledgeToSend);
       eventManager.Register<TaskTimerElapsed>().To(ValidateSentNotifications).When(t => t.MinuteElapsed == 1);
+    }
+
+    private IEnumerable<Message> OnMessageWithAcknowledgeToSend(MessageWithAcknowledge arg) {
+      var sentDate = _dateTimeManager.GetNow();
+      var message = arg.Message;
+
+      if (arg.From != null) {
+        message = $"From : {arg.From.Name} \n {arg.Message}";
+      }
+
+      var alert = new Alert
+      {
+        Responsible = arg.To,
+        Status = StatusType.New
+      };
+
+      alert.NotificationsSent.Add(sentDate);
+      alert.Actors.Add(arg.To);
+
+      _janelUnitOfWork.AlertRepository.Insert(alert);
+
+      return SendNotificationWithAcknowledge(sentDate, arg.To, (arg.To.PreferedCommunications?.FirstOrDefault() ?? CommunicationType.Email), message, null, alert);
     }
 
     private IEnumerable<Message> ValidateSentNotifications(TaskTimerElapsed arg) {
@@ -105,7 +130,7 @@ namespace Janel.Core {
 
       if (notification == null) {
         notification = new Notification {
-          Message = $"{message}\n\nClick here to take action http:\\mysuperlink.com",
+          Message = $"{message}\n\nClick here to take action http://mysuperlink.com",
           Source = source
         };
 

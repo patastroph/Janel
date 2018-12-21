@@ -2,15 +2,19 @@
 using Janel.Data;
 using System;
 using System.Linq;
+using Janel.Data.Event;
+using Observer.Core;
 
 namespace Janel.Core {
   public class ScheduleManager : IScheduleManager {
     private readonly IJanelUnitOfWork _unitOfWork;
     private readonly IDateTimeManager _dateTimeManager;
+    private readonly IPersonManager _personManager;
 
-    public ScheduleManager(IJanelUnitOfWork unitOfWork, IDateTimeManager dateTimeManager) {
+    public ScheduleManager(IJanelUnitOfWork unitOfWork, IDateTimeManager dateTimeManager, IPersonManager personManager) {
       _unitOfWork = unitOfWork;
       _dateTimeManager = dateTimeManager;
+      _personManager = personManager;
     }
 
     public void AddSchedule(Person responsible, DateTime startDate, DateTime endDate) {
@@ -104,7 +108,13 @@ namespace Janel.Core {
     }
 
     public Person GetPersonInCharge() {
-      return GetCurrentSchedule()?.Responsible;
+      var currentSchedule = GetCurrentSchedule();
+
+      if (currentSchedule == null) {
+        return null;
+      }
+
+      return currentSchedule.Substitute ?? currentSchedule.Responsible;
     }
 
     public Schedule GetSchedule(Guid id) {
@@ -135,21 +145,33 @@ namespace Janel.Core {
                                                                           s.Responsible.Id.Equals(responsible.Id) && s.IsBusy).OrderBy(s => s.StartAt).FirstOrDefault();
 
       if (schedule != null) {
-        schedule.IsBusy = false;        
+        schedule.IsBusy = false;
+        schedule.BusyReason = null;
+        schedule.Substitute = null;
+        
         _unitOfWork.ScheduleRepository.Update(schedule);
       } else {
         throw new Exception($"Buzy schedule not found for {responsible.Name}");
       }
     }
 
-    public void SetPersonAsBusy(Person responsible, string reason) {
+    public void SetPersonAsBusy(Person responsible, string reason, Guid? substituteId = null) {
       var now = DateTime.Now;
       var schedule = _unitOfWork.ScheduleRepository.GetList().Where(s => ((s.StartAt <= now && s.EndAt >= now) || s.StartAt > now) && s.Responsible.Id.Equals(responsible.Id)).OrderBy(s => s.StartAt).FirstOrDefault();
 
       if (schedule != null) {
+        var nextResponsible = substituteId.HasValue ? _personManager.GetPerson(substituteId.Value) : GetNextPersonInCharge(schedule.Responsible);
+
+        if (nextResponsible == null) {
+          throw new Exception("No one available");
+        }
+
         schedule.IsBusy = true;
         schedule.BusyReason = reason;
+        schedule.Substitute = nextResponsible;
         _unitOfWork.ScheduleRepository.Update(schedule);
+
+        JanelObserver.EventManager.Dispatch(new MessageWithAcknowledge(responsible, nextResponsible, "I'am currently busy. Can you please handle support. Much appreciated !"));
       } else {
         throw new Exception($"Active schedule not found for {responsible.Name}");
       }
@@ -168,7 +190,7 @@ namespace Janel.Core {
 
     public Schedule GetCurrentSchedule() {
       var now = _dateTimeManager.GetNow();
-      var schedule = _unitOfWork.ScheduleRepository.GetList().Where(s => (s.StartAt <= now && s.EndAt >= now && !s.IsBusy) || s.StartAt > now).OrderBy(s => s.StartAt).FirstOrDefault();
+      var schedule = _unitOfWork.ScheduleRepository.GetList().Where(s => (s.StartAt <= now && s.EndAt >= now) || s.StartAt > now).OrderBy(s => s.StartAt).FirstOrDefault();
 
       return schedule;
     }

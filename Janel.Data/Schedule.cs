@@ -11,5 +11,6 @@ namespace Janel.Data {
     public DateTime EndAt { get; set; }
     public bool IsBusy { get; set; }
     public string BusyReason { get; set; }
+    public Person Substitute { get; set; }
   }
 }

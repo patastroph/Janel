@@ -69,15 +69,70 @@ namespace Janel.Web.Controllers {
 
     public IActionResult ConfirmCall(Guid personId, string message, CommunicationType communicationType) {
       var person = _personManager.GetPerson(personId);
-
+      
       _notificationManager.SendNotification(person, message, communicationType);
 
       return RedirectToAction(nameof(Index));
     }
 
+    public IActionResult ChangeAvailability() {
+      var model = GetChangeAvailabilityViewModel();
+
+      if (model == null) {
+        return RedirectToAction(nameof(Index));
+      }
+
+      return View(model);
+    }
+
+    public IActionResult TakeItBack() {
+      var currentSchedule = _scheduleManager.GetCurrentSchedule();
+      _scheduleManager.SetPersonAsBack(currentSchedule.Responsible);
+
+      return RedirectToAction(nameof(Index));
+    }
+
+    [HttpPost]
+    public IActionResult ConfirmChangeAvailability(string reason, Guid substitute) {
+      try {
+        var currentSchedule = _scheduleManager.GetCurrentSchedule();
+        var currentUserId = _userManager.GetUserId(User);
+
+        if (string.IsNullOrEmpty(currentUserId) ||
+            (!currentSchedule.Responsible.Id.Equals(new Guid(currentUserId)) && !(currentSchedule.Substitute?.Id).GetValueOrDefault().Equals(new Guid(currentUserId)))) {
+          _scheduleManager.SetPersonAsBusy(currentSchedule.Responsible, reason, substitute);
+        }
+      }
+      catch (Exception exc) {
+        ModelState.AddModelError("", exc.Message);
+        var model = GetChangeAvailabilityViewModel();
+        return View(nameof(ChangeAvailability), model);
+      }
+
+      return Redirect("/");
+    }
 
     public IActionResult Error() {
       return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    private ChangeAvailabilityViewModel GetChangeAvailabilityViewModel() {
+      var currentSchedule = _scheduleManager.GetCurrentSchedule();
+      var currentUserId = _userManager.GetUserId(User);
+
+      if (string.IsNullOrEmpty(currentUserId) || 
+          (!currentSchedule.Responsible.Id.Equals(new Guid(currentUserId)) && !(currentSchedule.Substitute?.Id).GetValueOrDefault().Equals(new Guid(currentUserId)))) {
+        return null;
+      }
+      
+      var model = new ChangeAvailabilityViewModel {
+        IsAvailable = currentSchedule.IsBusy,
+        SwitchTo = currentSchedule.IsBusy ? "Available" : "Busy",
+        LoggedUserIsResponsible = currentUserId == currentSchedule.Responsible.Id.ToString(),
+        People = _personManager.GetPersonList().ToList()
+      };
+
+      return model;
     }
   }
 }

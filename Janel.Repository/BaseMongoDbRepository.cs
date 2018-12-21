@@ -58,7 +58,9 @@ namespace Janel.Repository {
 
     public virtual ConcreteType BeforeSave(BaseType item) {
       if (typeof(BaseType) != typeof(ConcreteType)) {
-        return CopyObject(item);
+        var convertedObj = CopyObject(item);
+        convertedObj.Id = item.Id;
+        return convertedObj;
       }
 
       return item as ConcreteType;

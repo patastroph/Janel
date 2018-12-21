@@ -1,4 +1,4 @@
-﻿@model  AlertListViewModel
+﻿@model AlertListViewModel
 
 <link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
 
@@ -7,34 +7,42 @@
   Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section Scripts {
+  @{await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
 
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $("#CallSomeone").validate();
+    });
+  </script>>
+}
 
 <div class="row">
   <div class="col-md-6">
     <h2>Current Responsible</h2>
     <ul>
-      <li>@(Model.CurrentResponsibleIsLoggedUser ? "You" : (Model.CurrentResponsible?.Name ?? "Not set"))</li>
-      @if (Model.CurrentResponsible != null) { 
-      <li>From : @Html.DisplayFor(modelItem => modelItem.CurrentResponsibleStartDate)</li>
-      <li>To : @Html.DisplayFor(modelItem => modelItem.CurrentResponsibleEndDate)</li>
-      <li>Status : @(Model.CurrentResponsibleStatus.HasValue && Model.CurrentResponsibleStatus.Value ? "Not available " + Model.CurrentResponsibleStatusComment : "Available")</li>
+      <li>@(Model.CurrentResponsibleIsLoggedUser ? "You 👍" : (Model.CurrentResponsible?.Name ?? "Not set"))</li>
+      @if (Model.CurrentResponsible != null) {
+        <li>From : @Html.DisplayFor(modelItem => modelItem.CurrentResponsibleStartDate)</li>
+        <li>To : @Html.DisplayFor(modelItem => modelItem.CurrentResponsibleEndDate)</li>
+        <li>Status : @(Model.CurrentResponsibleStatus.HasValue && Model.CurrentResponsibleStatus.Value ? "Not available " + Model.CurrentResponsibleStatusComment : "Available") <a asp-action="ChangeAvailability">Change</a></li>
       }
     </ul>
   </div>
   <div class="col-md-6">
     <h2>Next Responsible</h2>
     <ul>
-      <li>@(Model.NextResponsibleIsLoggedUser ? "You" : (Model.NextResponsible?.Name ?? "Not set"))</li>      
+      <li>@(Model.NextResponsibleIsLoggedUser ? "You" : (Model.NextResponsible?.Name ?? "Not set"))</li>
     </ul>
   </div>
 </div>
 
 <h2>Alerts</h2>
 
-<form asp-action="Call" method="post">
+<form asp-action="Call" method="post" id="CallSomeone">
   <label>Person :</label>
-  <select name="personId" asp-items="@(new SelectList(Model.People, "Id", "Name"))"><option /></select>
-  <input type="submit" value="Call"/>
+  <select name="personId" id="personId" asp-items="@(new SelectList(Model.People, "Id", "Name"))" data-val-required="The field is required." required><option /></select>
+  <input type="submit" value="Call" class="btn btn-default" />
 </form>
 
 <pager class="pager-container" options="@PagedList.Core.Mvc.PagedListRenderOptions.ClassicPlusFirstAndLast" list="@Model.Alerts" asp-action="Index" asp-controller="Home" asp-all-route-data='Context.Request.Query.Where(q => q.Key != "page").ToDictionary(q => q.Key, q => q.Value.ToString())' />
@@ -52,16 +60,17 @@ Page @(Model.Alerts.PageCount < Model.Alerts.PageNumber ? 0 : Model.Alerts.PageN
   </thead>
   <tbody>
     @foreach (var item in Model.Alerts) {
-    <tr>
-      <td>@Html.DisplayFor(modelItem => item.Alert.Description)</td>
-      <td>@Html.DisplayFor(modelItem => item.Alert.Service.Name)</td>
-      <td>@Html.DisplayFor(modelItem => item.Alert.Status)</td>
-      <td>@Html.DisplayFor(modelItem => item.Alert.ReceivedAt)</td>
-      <td>@Html.DisplayFor(modelItem => item.Alert.Responsible.Name)</td>      
-      <td>@Html.DisplayFor(modelItem => item.Alert.UpdatedAt)</td>
-      <td><form asp-action="TakeAction"><input type="hidden" asp-for="@item.Alert.Id" /><select asp-for="@item.SelectedAction" asp-items="@(new SelectList(item.PossibleActions))"><option /></select> <input type="submit" data-confirm="Are u sure?"/></form></td>
-    </tr>
+      <tr>
+        <td>@Html.DisplayFor(modelItem => item.Alert.Description)</td>
+        <td>@Html.DisplayFor(modelItem => item.Alert.Service.Name)</td>
+        <td>@Html.DisplayFor(modelItem => item.Alert.Status)</td>
+        <td>@Html.DisplayFor(modelItem => item.Alert.ReceivedAt)</td>
+        <td>@Html.DisplayFor(modelItem => item.Alert.Responsible.Name)</td>
+        <td>@Html.DisplayFor(modelItem => item.Alert.UpdatedAt)</td>
+        <td><form asp-action="TakeAction"><input type="hidden" asp-for="@item.Alert.Id" /><select asp-for="@item.SelectedAction" asp-items="@(new SelectList(item.PossibleActions))"><option /></select> <input type="submit" data-confirm="Are u sure?" /></form></td>
+      </tr>
     }
   </tbody>
 </table>
 <pager class="pager-container" options="@PagedList.Core.Mvc.PagedListRenderOptions.ClassicPlusFirstAndLast" list="@Model.Alerts" asp-action="Index" asp-controller="Home" asp-all-route-data='Context.Request.Query.Where(q => q.Key != "page").ToDictionary(q => q.Key, q => q.Value.ToString())' />
+

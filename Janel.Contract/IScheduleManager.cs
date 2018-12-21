@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Janel.Contract {
   public interface IScheduleManager {
-    void SetPersonAsBusy(Person responsible, string reason);
+    void SetPersonAsBusy(Person responsible, string reason, Guid? substituteId = null);
     void SetPersonAsBack(Person responsible);
 
     Person GetPersonInCharge();
