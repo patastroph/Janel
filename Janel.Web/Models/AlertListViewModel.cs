@@ -16,5 +16,6 @@ namespace Janel.Web.Models {
     public DateTime? CurrentResponsibleEndDate { get; internal set; }
     public Person NextResponsible { get; internal set; }
     public bool NextResponsibleIsLoggedUser { get; internal set; }
+    public Person Substitute { get; set; }
   }
 }

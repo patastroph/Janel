@@ -42,6 +42,7 @@ namespace Janel.Web.Controllers {
         CurrentResponsibleStatusComment = currentSchedule?.BusyReason,
         CurrentResponsibleStartDate = currentSchedule?.StartAt,
         CurrentResponsibleEndDate = currentSchedule?.EndAt,
+        Substitute = currentSchedule?.Substitute,
         NextResponsibleIsLoggedUser = currentUserId == (nextResponsible?.Id?.ToString() ?? ""),
         NextResponsible = nextResponsible,
         People = _personManager.GetPersonList().OrderBy(p => p.Name).ToList(),
@@ -51,25 +52,16 @@ namespace Janel.Web.Controllers {
       return View(viewModel);
     }
 
-    public IActionResult About() {
-      ViewData["Message"] = "Your application description page.";
-
-      return View();
-    }
-
-    public IActionResult Contact() {
-      ViewData["Message"] = "Your contact page.";
-
-      return View();
-    }
-
     public IActionResult Call(Guid personId) {
       return View(_personManager.GetPerson(personId));
     }
 
     public IActionResult ConfirmCall(Guid personId, string message, CommunicationType communicationType) {
       var person = _personManager.GetPerson(personId);
-      
+      var sender = _personManager.GetPerson(User);
+
+      message += $"\n\n- From : {sender.Name ?? sender.Email}";
+
       _notificationManager.SendNotification(person, message, communicationType);
 
       return RedirectToAction(nameof(Index));
@@ -98,7 +90,7 @@ namespace Janel.Web.Controllers {
         var currentSchedule = _scheduleManager.GetCurrentSchedule();
         var currentUserId = _userManager.GetUserId(User);
 
-        if (string.IsNullOrEmpty(currentUserId) ||
+        if (!string.IsNullOrEmpty(currentUserId) ||
             (!currentSchedule.Responsible.Id.Equals(new Guid(currentUserId)) && !(currentSchedule.Substitute?.Id).GetValueOrDefault().Equals(new Guid(currentUserId)))) {
           _scheduleManager.SetPersonAsBusy(currentSchedule.Responsible, reason, substitute);
         }
@@ -126,10 +118,11 @@ namespace Janel.Web.Controllers {
       }
       
       var model = new ChangeAvailabilityViewModel {
-        IsAvailable = currentSchedule.IsBusy,
+        IsAvailable = !currentSchedule.IsBusy,
         SwitchTo = currentSchedule.IsBusy ? "Available" : "Busy",
         LoggedUserIsResponsible = currentUserId == currentSchedule.Responsible.Id.ToString(),
-        People = _personManager.GetPersonList().ToList()
+        People = _personManager.GetPersonList().ToList(),
+        Substitute = (_scheduleManager.GetNextPersonInCharge(currentSchedule.Responsible)?.Id).GetValueOrDefault()
       };
 
       return model;

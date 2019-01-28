@@ -12,18 +12,20 @@ namespace Tests {
   public class ScheduleManagerTest {
     private Mock<IJanelUnitOfWork> _unitOfWork;
     private Mock<IDateTimeManager> _dateTimeManager;
+    private Mock<IPersonManager> _personManager;
 
     [SetUp]
     public void Setup() {
       _unitOfWork = new Mock<IJanelUnitOfWork>();
       _dateTimeManager = new Mock<IDateTimeManager>();
+      _personManager = new Mock<IPersonManager>();
 
       _dateTimeManager.Setup(dt => dt.GetNow()).Returns(new DateTime(2017, 1, 3, 15, 30, 14));
     }
 
     [Test]
     public void ShouldGetExceptionWhenNoScheduleInserted() {
-      var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object);
+      var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object, _personManager.Object);
 
       _unitOfWork.Setup(u => u.ScheduleRepository.GetList()).Returns(new List<Schedule>().AsQueryable());
 
@@ -32,7 +34,7 @@ namespace Tests {
 
     [Test]
     public void ShouldGetAResponsible() {
-      var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object);
+      var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object, _personManager.Object);
       var responsible = new Person();
 
       _unitOfWork.Setup(u => u.ScheduleRepository.GetList()).Returns(new List<Schedule>
@@ -52,7 +54,7 @@ namespace Tests {
 
     [Test]
     public void WhenResponsibleBusyShouldGetNextInSchedule() {
-      var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object);
+      var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object, _personManager.Object);
       var busyResponsible = new Person { Name = "Iam Busy" };
       var nextResponsible = new Person { Name = "Iam Next" };
       var previousResponsible = new Person { Name = "Iwas Responsible" };
@@ -88,7 +90,7 @@ namespace Tests {
 
     [Test]
     public void ScheduleShouldBeInsertedWhenAdded() {
-      var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object);
+      var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object, _personManager.Object);
 
       _unitOfWork.Setup(u => u.ScheduleRepository.GetList()).Returns(new List<Schedule>().AsQueryable());
       
@@ -99,7 +101,7 @@ namespace Tests {
 
     [Test]
     public void ScheduleShouldBeInsertedWithGoodInfos() {
-      var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object);
+      var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object, _personManager.Object);
       var responsible = new Person();
       var starDate = new DateTime(2016, 12, 26, 8, 0, 0);
       var endDate = new DateTime(2017, 1, 1, 7, 59, 0);

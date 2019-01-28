@@ -28,7 +28,7 @@
         <label for="Message">Send a message by</label>
       </dt>
       <dd>
-        <select name="communicationType" asp-items="Html.GetEnumSelectList<Janel.Data.CommunicationType>()" data-selected="@((int)Model.PreferedCommunications.First())"></select>        
+        <select name="communicationType" asp-items="Html.GetEnumSelectList<Janel.Data.CommunicationType>()" data-selected="@((int)(Model.PreferedCommunications?.FirstOrDefault() ?? CommunicationType.Email))"></select>        
       </dd>      
       <dt>
         <label for="Message">Message</label>

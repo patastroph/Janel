@@ -17,31 +17,33 @@
 
 <h2>Change availability to @Html.DisplayFor(model => model.SwitchTo)</h2>
 
-@if (!Model.IsAvailable && Model.LoggedUserIsResponsible){
-  <asp asp-action="TakeItBack">Take back support</asp>
-}
+@if (!Model.IsAvailable && Model.LoggedUserIsResponsible) {
+  <div class="form-group">
+    <a asp-action="TakeItBack">Take back support</a>
+  </div>
+ }
 
-  <form asp-action="ConfirmChangeAvailability" method="post" id="ChangeAvailability">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <form asp-action="ConfirmChangeAvailability" method="post" id="ChangeAvailability">
+      <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-    <div class="form-group">
-      <label for="reason" class="control-label">Reason</label>
-      <textarea name="reason" id="reason" data-val-required="The field is required." required class="form-control"></textarea>
+      <div class="form-group">
+        <label for="reason" class="control-label">Reason*</label>
+        <textarea name="reason" id="reason" data-val-required="The field is required." required class="form-control"></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="reason" class="control-label">Switch support to*</label>
+        <select asp-for="Substitute" class="form-control" asp-items="@(new SelectList(Model.People, "Id", "Name"))">
+          <option />
+        </select>
+      </div>
+
+
+      <div class="form-group">
+        <input type="submit" data-confirm="Are u sure?" class="btn btn-default" />
+      </div>
+    </form>
+
+    <div>
+      <a asp-action="Index">Back to List</a>
     </div>
-
-    <div class="form-group">
-      <label for="reason" class="control-label">Switch support to</label>
-      <select asp-for="Substitute" class="form-control" asp-items="@(new SelectList(Model.People, "Id", "Name"))">
-        <option />
-      </select>
-    </div>
-    
-
-    <div class="form-group">
-      <input type="submit" data-confirm="Are u sure?" class="btn btn-default" />
-    </div>
-  </form>
-
-<div>
-  <a asp-action="Index">Back to List</a>
-</div>

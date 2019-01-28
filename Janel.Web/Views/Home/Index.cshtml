@@ -25,7 +25,7 @@
       @if (Model.CurrentResponsible != null) {
         <li>From : @Html.DisplayFor(modelItem => modelItem.CurrentResponsibleStartDate)</li>
         <li>To : @Html.DisplayFor(modelItem => modelItem.CurrentResponsibleEndDate)</li>
-        <li>Status : @(Model.CurrentResponsibleStatus.HasValue && Model.CurrentResponsibleStatus.Value ? "Not available " + Model.CurrentResponsibleStatusComment : "Available") <a asp-action="ChangeAvailability">Change</a></li>
+        <li>Status : @Html.Raw(Model.CurrentResponsibleStatus.HasValue && Model.CurrentResponsibleStatus.Value ? "Not available - <strong>" + (Model.Substitute?.Name ?? Model.Substitute?.Email) + "</strong> in charge - " : "Available") <a asp-action="ChangeAvailability">Change</a></li>
       }
     </ul>
   </div>
