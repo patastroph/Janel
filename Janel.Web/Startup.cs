@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Janel.Contract;
 using Janel.Core;
+using Janel.Core.Probe;
 using Janel.Data;
 using Janel.Membership;
 using Janel.Repository;
@@ -94,6 +95,10 @@ namespace Janel.Web {
       services.AddTransient<IEventListener, AlertManager>();
       services.AddTransient<IEventListener, Core.EventManager>();
       services.AddTransient<IEventListener, NotificationManager>();
+
+      services.AddSingleton<IEventListener, Monitis>();
+      //services.AddSingleton<IEventListener, Signifyd>();
+      //services.AddSingleton<IEventListener, WibotServices>();
 
       services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 

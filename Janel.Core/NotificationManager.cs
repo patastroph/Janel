@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Net.Mail;
+using Microsoft.AspNetCore.Http;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 
@@ -15,12 +16,14 @@ namespace Janel.Core {
     private readonly IScheduleManager _scheduleManager;
     private readonly IJanelUnitOfWork _janelUnitOfWork;
     private readonly IDateTimeManager _dateTimeManager;
+    private readonly IHttpContextAccessor _contextAccessor;
     private List<Notification> _ongoingNotifications;
 
-    public NotificationManager(IScheduleManager scheduleManager, IJanelUnitOfWork janelUnitOfWork, IDateTimeManager dateTimeManager) {
+    public NotificationManager(IScheduleManager scheduleManager, IJanelUnitOfWork janelUnitOfWork, IDateTimeManager dateTimeManager, IHttpContextAccessor contextAccessor) {
       _scheduleManager = scheduleManager;
       _janelUnitOfWork = janelUnitOfWork;
       _dateTimeManager = dateTimeManager;
+      _contextAccessor = contextAccessor;
       _ongoingNotifications = new List<Notification>();
     }
 
@@ -129,8 +132,9 @@ namespace Janel.Core {
       };
 
       if (notification == null) {
+        var appUrl = ConfigurationManager.AppSettings["Website_Url"] ?? _contextAccessor?.HttpContext.Request.Host.Host;
         notification = new Notification {
-          Message = $"{message}\n\nClick here to take action http://mysuperlink.com",
+          Message = $"{message}\n\nClick here to take action {appUrl}",
           Source = source
         };
 
