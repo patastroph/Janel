@@ -28,8 +28,11 @@ namespace Janel.Core.Probe.Base {
     }
 
     private IEnumerable<Message> Probe(TaskTimerElapsed arg) {
-      try
-      {
+      if (!Enabled) {
+        return JanelObserver.Success();
+      }
+
+      try {
         var failureMessage = "Alert !\n";
 
         using (var client = new HttpClient()) {

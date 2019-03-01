@@ -79,7 +79,7 @@ namespace Janel.Core {
     }
     
     public Person GetNextPersonInCharge(Person nextFromPerson) {
-      var now = DateTime.Now;
+      var now = _dateTimeManager.GetNow();
       var schedules = _unitOfWork.ScheduleRepository.GetList().Where(s => (s.StartAt <= now && s.EndAt >= now && !s.IsBusy) || s.StartAt > now).OrderBy(s => s.StartAt);
 
       if (!schedules.Any()) {
@@ -140,7 +140,7 @@ namespace Janel.Core {
     }
 
     public void SetPersonAsBack(Person responsible) {
-      var now = DateTime.Now;
+      var now = _dateTimeManager.GetNow();
       var schedule = _unitOfWork.ScheduleRepository.GetList().Where(s => ((s.StartAt <= now && s.EndAt >= now) || s.StartAt > now) && 
                                                                           s.Responsible.Id.Equals(responsible.Id) && s.IsBusy).OrderBy(s => s.StartAt).FirstOrDefault();
 
@@ -156,7 +156,7 @@ namespace Janel.Core {
     }
 
     public void SetPersonAsBusy(Person responsible, string reason, Guid? substituteId = null) {
-      var now = DateTime.Now;
+      var now = _dateTimeManager.GetNow();
       var schedule = _unitOfWork.ScheduleRepository.GetList().Where(s => ((s.StartAt <= now && s.EndAt >= now) || s.StartAt > now) && s.Responsible.Id.Equals(responsible.Id)).OrderBy(s => s.StartAt).FirstOrDefault();
 
       if (schedule != null) {

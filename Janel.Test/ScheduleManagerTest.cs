@@ -7,7 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Tests {
+namespace Janel.Test {
+
   [TestFixture]
   public class ScheduleManagerTest {
     private Mock<IJanelUnitOfWork> _unitOfWork;
@@ -103,14 +104,14 @@ namespace Tests {
     public void ScheduleShouldBeInsertedWithGoodInfos() {
       var manager = new ScheduleManager(_unitOfWork.Object, _dateTimeManager.Object, _personManager.Object);
       var responsible = new Person();
-      var starDate = new DateTime(2016, 12, 26, 8, 0, 0);
+      var startDate = new DateTime(2016, 12, 26, 8, 0, 0);
       var endDate = new DateTime(2017, 1, 1, 7, 59, 0);
 
       _unitOfWork.Setup(u => u.ScheduleRepository.GetList()).Returns(new List<Schedule>().AsQueryable());
       
-      manager.AddSchedule(responsible, starDate, endDate);
+      manager.AddSchedule(responsible, startDate, endDate);
 
-      _unitOfWork.Verify(u => u.ScheduleRepository.Insert(It.Is<Schedule>(s => s.Responsible == responsible && s.StartAt == starDate && s.EndAt == endDate)), Times.Once);
+      _unitOfWork.Verify(u => u.ScheduleRepository.Insert(It.Is<Schedule>(s => s.Responsible == responsible && s.StartAt == startDate && s.EndAt == endDate)), Times.Once);
     }
 
   }

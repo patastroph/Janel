@@ -33,9 +33,9 @@ namespace Janel.Web {
         o.Filters.Add(new AuthorizeFilter(policy));
       });
 
-      services.ConfigureIdentity();
-
-      services.ConfigureIoC();
+      services.ConfigureIdentity()
+              .ConfigureIoC()
+              .ConfigureProbes();
 
       JanelObserver.RegisterAllEvents(services.BuildServiceProvider());
 
@@ -55,7 +55,8 @@ namespace Janel.Web {
       if (env.IsDevelopment()) {
         app.UseBrowserLink();
         app.UseDeveloperExceptionPage();
-      } else {
+      }
+      else {
         app.UseExceptionHandler("/Home/Error");
       }
 
@@ -96,11 +97,15 @@ namespace Janel.Web {
       services.AddTransient<IEventListener, Core.EventManager>();
       services.AddTransient<IEventListener, NotificationManager>();
 
+      services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
+
+      return services;
+    }
+
+    public static IServiceCollection ConfigureProbes(this IServiceCollection services) {
       services.AddSingleton<IEventListener, Monitis>();
       //services.AddSingleton<IEventListener, Signifyd>();
       //services.AddSingleton<IEventListener, WibotServices>();
-
-      services.AddSingleton<IActionContextAccessor, ActionContextAccessor>();
 
       return services;
     }

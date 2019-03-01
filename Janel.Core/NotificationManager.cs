@@ -59,7 +59,7 @@ namespace Janel.Core {
       var notificationsToRemove = new List<Notification>();
 
       foreach (var notification in _ongoingNotifications) {
-        if (notification.MessagesSent.Last().SentOn.AddMinutes(3) >= DateTime.Now) {
+        if (notification.MessagesSent.Last().SentOn.AddMinutes(3) >= _dateTimeManager.GetNow()) {
           //3 minutes elapsed. Need to do something
           if (notification.MessagesSent.Count >= 3) {
             //Responsible never responded
@@ -74,7 +74,7 @@ namespace Janel.Core {
                                       sendItTo.PreferedCommunications.ElementAt(nbMessageSentToThisGuy) :
                                       sendItTo.PreferedCommunications.Last();
 
-            SendNotificationWithAcknowledge(DateTime.Now, sendItTo, communicationType, notification.Message, notification, null);
+            SendNotificationWithAcknowledge(_dateTimeManager.GetNow(), sendItTo, communicationType, notification.Message, notification, null);
 
             _janelUnitOfWork.NotificationRepository.Update(notification);
           }
@@ -105,7 +105,7 @@ namespace Janel.Core {
 
     private IEnumerable<Message> OnAlertReceived(AlertReceived arg) {
       var responsible = arg.OverridePerson ?? _scheduleManager.GetPersonInCharge();
-      var sentDate = DateTime.Now;
+      var sentDate = _dateTimeManager.GetNow();
 
       if (responsible == null) {
         JanelObserver.EventManager.Dispatch(new ErrorOccurred("No Responsible found"));
@@ -119,7 +119,7 @@ namespace Janel.Core {
 
       _janelUnitOfWork.AlertRepository.Update(arg.Alert);
 
-      var message = $"Alert received from {arg.Alert.Service.Name}, on {DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")}. Message : {arg.Alert.Description}";
+      var message = $"Alert received from {arg.Alert.Service.Name}, on {_dateTimeManager.GetNow().ToString("yyyy-MM-dd hh:mm:ss")}. Message : {arg.Alert.Description}";
 
       return SendNotificationWithAcknowledge(sentDate, responsible, (responsible.PreferedCommunications?.First() ?? CommunicationType.Email), message, null, arg.Alert);         
     }

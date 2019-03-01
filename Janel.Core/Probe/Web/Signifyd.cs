@@ -1,7 +1,7 @@
 ﻿using Janel.Contract;
 using Janel.Core.Probe.Base;
 
-namespace Janel.Core.Probe
+namespace Janel.Core.Probe.Web
 {
     public class Signifyd : WebProbe
     {

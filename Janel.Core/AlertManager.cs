@@ -52,12 +52,12 @@ namespace Janel.Core {
           case StatusType.Acknowledge:
           case StatusType.Fixed:
           case StatusType.Transferring:          
-            if (alert.UpdatedAt.AddMinutes(60) >= DateTime.Now) {
+            if (alert.UpdatedAt.AddMinutes(60) >= _dateTimeManager.GetNow()) {
               EscalateAlert(alert);
             }
             break;
           case StatusType.Escalated:
-            if (alert.UpdatedAt.AddMinutes(60) >= DateTime.Now) {
+            if (alert.UpdatedAt.AddMinutes(60) >= _dateTimeManager.GetNow()) {
               //In Deep shit !
               var newResponsible = _scheduleManager.GetNextPersonInCharge(alert.Responsible);
 
@@ -168,7 +168,7 @@ namespace Janel.Core {
         throw new Exception("Alert not found");
       }
 
-      alert.CompletedAt = DateTime.Now;
+      alert.CompletedAt = _dateTimeManager.GetNow();
       alert.Status = StatusType.Fixed;
       alert.UpdatedAt = _dateTimeManager.GetNow();
 
@@ -185,7 +185,7 @@ namespace Janel.Core {
         throw new Exception("Alert not found");
       }
 
-      alert.CompletedAt = DateTime.Now;
+      alert.CompletedAt = _dateTimeManager.GetNow();
       alert.Status = StatusType.Closed;
       alert.UpdatedAt = _dateTimeManager.GetNow();
 
@@ -198,9 +198,9 @@ namespace Janel.Core {
     }
 
     public void CannotHandle(Alert alert, Person responsible, ReasonType reason) {
-      var nextReponsible = _scheduleManager.GetNextPersonInCharge(responsible);
+      var nextResponsible = _scheduleManager.GetNextPersonInCharge(responsible);
 
-      if (nextReponsible == null) {
+      if (nextResponsible == null) {
         JanelObserver.EventManager.Dispatch(new ErrorOccurred($"No one can handle alert {alert.Id}"));
         return;
       }
@@ -212,7 +212,7 @@ namespace Janel.Core {
       _unitOfWork.AlertRepository.Update(alert);
 
       JanelObserver.EventManager.Dispatch(new AlertChanged(alert, StatusType.Transferring.ToString(), responsible.Name));
-      JanelObserver.EventManager.Dispatch(new AlertReceived(alert, nextReponsible));
+      JanelObserver.EventManager.Dispatch(new AlertReceived(alert, nextResponsible));
     }
 
     private SeverityType CalculateSeverity(Alert alert) {

@@ -29,6 +29,10 @@ namespace Janel.Core.Probe.Base {
     }
 
     private IEnumerable<Message> Probe(TaskTimerElapsed arg) {
+      if (!Enabled) {
+        return JanelObserver.Success();
+      }
+
       try {
         using (var authentication = new WindowsLogin(UserName, Domain, Password)) {
           var failedServices = new List<string>();
